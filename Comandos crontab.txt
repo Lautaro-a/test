@@ -1,0 +1,9 @@
+psql -U postgres
+
+CREATE TABLE caucharitest2 (date timestamptz, uri text, val numeric);
+
+create temp table stage(x jsonb);
+
+COPY stage FROM PROGRAM 'curl https://portal.solarpark-online.com/ifms/sources/66e4ebde-07be-11eb-8c92-42010afa015a/events?apiKey=38deaa51-8716-4cc9-aa42-ab14fb72a752.01';
+
+insert into caucharitest2 select f.* from stage, jsonb_populate_recordset(null::caucharitest2, x) f;
